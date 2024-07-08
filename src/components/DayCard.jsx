@@ -14,7 +14,7 @@ export default function DayCard({ day, todos, setTodos }) {
       text: newTodo,
       id: Math.floor(Math.random() * 10000) + "",
       checked: false,
-      day
+      day: day.name,
     }])
 
     setNewTodo("")
@@ -22,8 +22,8 @@ export default function DayCard({ day, todos, setTodos }) {
 
   return (
     <div className="bg-white rounded-md flex flex-col items-center gap-2 px-4 py-2 shadow-xl has-[.dragging-over]:border-2 border-black">
-      <p className="deneme font-semibold text-lg">{day}</p>
-      <Droppable droppableId={day}>
+      <p className="deneme font-semibold text-lg">{day.name}</p>
+      <Droppable droppableId={day.name}>
         {(provided, snapshot) => (
           <div 
             {...provided.droppableProps}
