@@ -11,8 +11,6 @@ export const connectDB = () => {
     .catch(err => {
       console.log(err);
     });
-
-    console.log(mongoose.models)
 }
 
 const todoSchema = new mongoose.Schema(
@@ -25,6 +23,15 @@ const todoSchema = new mongoose.Schema(
       type: Boolean,
       required: true,
       default: false,
+    },
+    date: {
+      type: Date,
+      required: true,
+    },
+    order: {
+      type: Number,
+      required: true,
+      default: 0,
     },
   },
   { versionKey: false, timestamps: true }

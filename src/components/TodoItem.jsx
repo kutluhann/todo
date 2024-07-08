@@ -4,7 +4,7 @@ import { Draggable } from '@hello-pangea/dnd';
 
 export default function TodoItem({ todo, index }) {
   return (
-    <Draggable key={todo.id} draggableId={todo.id} index={index}>
+    <Draggable key={todo._id} draggableId={todo._id} index={index}>
       {(provided) => (
         <div 
           ref={provided.innerRef}

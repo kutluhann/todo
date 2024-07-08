@@ -12,6 +12,12 @@ export const addDaysToDate = (date, days) => {
   return new Date(date.getTime() + 1000 * 60 * 60 * 24 * days)
 }
 
+export const isSameDay = (firstDate, secondDate) => {
+  return firstDate.getDate() === secondDate.getDate() 
+    && firstDate.getMonth() === secondDate.getMonth()
+    && firstDate.getYear() === secondDate.getYear()
+}
+
 export const generateTodoDays = () => {
   const currentDate = new Date()
   const today = currentDate.toLocaleDateString("en", { weekday: 'long' })
@@ -49,4 +55,14 @@ export const generateTodoDays = () => {
       daysFromToday: 7,
     },
   ]
+}
+
+export const getStartAndEndOfDay = (date) => {
+  const startOfDay = new Date(date)
+  startOfDay.setHours(0, 0, 0, 0); 
+
+  const endOfDay = new Date(date)
+  endOfDay.setHours(23, 59, 59, 999)
+
+  return { startOfDay, endOfDay }
 }

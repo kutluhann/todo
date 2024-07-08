@@ -2,54 +2,41 @@
 
 import DayCard from "@/components/DayCard";
 import { DragDropContext } from '@hello-pangea/dnd';
-import { useState } from "react";
+import { isSameDay, addDaysToDate } from "@/utils";
+import { updateTodo } from "@/actions";
+import { useOptimistic, useTransition } from "react";
 
-export default function TodoArea({ days }) {
-  const [todos, setTodos] = useState([
-    {
-      text: "Todo 1",
-      checked: false,
-      id: "12",
-      day: "Monday (Today)",
-    },
-    {
-      text: "Todo 2",
-      checked: false,
-      id: "13",
-      day: "Monday (Today)",
-    },
-    {
-      text: "Todo 3",
-      checked: false,
-      id: "14",
-      day: "Tuesday",
-    },
-    {
-      text: "Todo 4",
-      checked: false,
-      id: "15",
-      day: "Tuesday",
-    },
-  ])
+export default function TodoArea({ days, todos }) {
+  const [pending, startTransition] = useTransition()
+  const [optimisticTodos, updateOptimisticTodo] = useOptimistic(todos, (state, updatedTodos) => {
+    return [
+      ...state.filter(todo => !isSameDay(todo.date, updatedTodos[0].date)),
+      ...updatedTodos
+    ]
+  })
 
-  const onDragEnd = (result) => {
-    console.log(result)
+  const onDragEnd = async (result) => {
     const { destination, source, draggableId } = result
 
     if (!destination) return
 
-    const todo = todos.find(todo => todo.id === draggableId)
-    const todosInDestinationDay = todos.filter(todo => todo.day === destination.droppableId && todo.id !== draggableId)
-    const todosInDifferentDays = todos.filter(todo => todo.day !== destination.droppableId && todo.id !== draggableId)
+    const day = days.find(day => day.name === destination.droppableId)
+    const todo = todos.find(todo => todo._id === draggableId)
+    const todosInDestinationDay = todos.filter(todo => isSameDay(todo.date, day.date) && todo._id !== draggableId)
 
-    if (destination.droppableId !== source.droppableId) todo.day = destination.droppableId
+    if (destination.droppableId !== source.droppableId) todo.date = day.date
 
-    setTodos([
-      ...todosInDifferentDays,
+    const updatedTodos = [
       ...todosInDestinationDay.slice(0, destination.index),
       todo,
       ...todosInDestinationDay.slice(destination.index)
-    ])
+    ]
+
+    startTransition(() => {
+      updateOptimisticTodo(updatedTodos)
+    })
+
+    await updateTodo(updatedTodos)
   }
 
   return (
@@ -57,9 +44,10 @@ export default function TodoArea({ days }) {
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="h-full w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4  sm:grid-rows-4 lg:grid-rows-2 *:w-full *:h-full gap-3">
           {days.map(day => {
-            const list = todos.filter(todo => todo.day == day.name)
+            const todoList = optimisticTodos.filter(todo => isSameDay(todo.date, day.date))
+
             return (
-              <DayCard key={day} day={day} todos={list} setTodos={setTodos} />
+              <DayCard key={day.name} day={day} todos={todoList} />
             )
           })}
         </div>
