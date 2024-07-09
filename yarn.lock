@@ -566,6 +566,11 @@ lru-cache@^10.2.0:
   resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-10.3.0.tgz#4a4aaf10c84658ab70f79a85a9a3f1e1fb11196b"
   integrity sha512-CQl19J/g+Hbjbv4Y3mFNNXFEL/5t/KCg8POCuUqd4rMKjGG+j1ybER83hxV58zL+dFI1PTkt3GNFSHRt+d8qEQ==
 
+lucide-react@^0.404.0:
+  version "0.404.0"
+  resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.404.0.tgz#41091e6179ad186b9eafb6be6a60a25227a942ac"
+  integrity sha512-8iYTmAG5dQWqYUEznRip2M7+KBKr7966bj3dqz0LJ8LUh5/sCIsKaJTEGdNTguLMRHTZy46sdqjrT3CupYqCeQ==
+
 memoize-one@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/memoize-one/-/memoize-one-6.0.0.tgz#b2591b871ed82948aee4727dc6abceeeac8c1045"

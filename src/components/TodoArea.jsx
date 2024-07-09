@@ -2,7 +2,7 @@
 
 import DayCard from "@/components/DayCard";
 import { DragDropContext } from '@hello-pangea/dnd';
-import { isSameDay, addDaysToDate } from "@/utils";
+import { isSameDay } from "@/utils";
 import { updateTodo } from "@/actions";
 import { useOptimistic, useTransition } from "react";
 

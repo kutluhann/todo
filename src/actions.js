@@ -20,8 +20,6 @@ export const addTodo = async (todoObj) => {
     }
   }).sort({ order: -1 });
 
-  console.log(latestTodo)
-
   todoObj.order = latestTodo ? latestTodo.order + 1 : 0
 
   const todo = new Todo(todoObj)
@@ -41,6 +39,12 @@ export const updateTodo = async (updatedTodos) => {
   })
 
   await Todo.bulkWrite(update)
+
+  revalidatePath("/")
+}
+
+export const deleteTodo = async (todoID) => {
+  await Todo.deleteOne({ _id: todoID })
 
   revalidatePath("/")
 }
