@@ -48,3 +48,9 @@ export const deleteTodo = async (todoID) => {
 
   revalidatePath("/")
 }
+
+export const changeStateOfTodo = async (todoID, state) => {
+  await Todo.updateOne({ _id: todoID }, { done: state })
+
+  revalidatePath("/")
+}

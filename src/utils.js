@@ -29,7 +29,6 @@ export const generateTodoDays = () => {
     {
       name: today + " (Today)",
       date: currentDate,
-      daysFromToday: 0,
     },
     ...filteredDays.slice(index).map(dayName => {
       const dayIndex = days.findIndex(day => day === dayName)
@@ -37,22 +36,19 @@ export const generateTodoDays = () => {
       return ({
         name: dayName,
         date: addDaysToDate(currentDate, dayIndex - index),
-        daysFromToday: dayIndex - index,
       })
     }),
     ...filteredDays.slice(0, index).map(dayName => {
       const dayIndex = days.findIndex(day => day === dayName)
 
       return ({
-        name: "Next " + dayName,
+        name: dayName,
         date: addDaysToDate(currentDate, 7 + dayIndex - index),
-        daysFromToday: 7 + dayIndex - index,
       })
     }),
     {
       name: "Next " + today,
       date: addDaysToDate(currentDate, 7),
-      daysFromToday: 7,
     },
   ]
 }
@@ -65,4 +61,13 @@ export const getStartAndEndOfDay = (date) => {
   endOfDay.setHours(23, 59, 59, 999)
 
   return { startOfDay, endOfDay }
+}
+
+export const formatDate = (date) => {
+  const month = date.toLocaleDateString("en", { month: 'long' })
+  const day = date.getDate()
+  const year = date.getFullYear()
+  
+  console.log(date)
+  return day + " " + month + " " + year
 }

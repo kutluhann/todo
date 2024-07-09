@@ -42,7 +42,7 @@ export default function TodoArea({ days, todos }) {
   return (
     <div className="h-full p-3 flex justify-center items-center">
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="h-full w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4  sm:grid-rows-4 lg:grid-rows-2 *:w-full *:h-full gap-3">
+        <div className="h-full w-full grid grid-cols-1 lg:grid-cols-4 lg:grid-rows-2 *:w-full *:h-full gap-3">
           {days.map(day => {
             const todoList = optimisticTodos.filter(todo => isSameDay(todo.date, day.date))
 
