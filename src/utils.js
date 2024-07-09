@@ -67,7 +67,6 @@ export const formatDate = (date) => {
   const month = date.toLocaleDateString("en", { month: 'long' })
   const day = date.getDate()
   const year = date.getFullYear()
-  
-  console.log(date)
+
   return day + " " + month + " " + year
 }

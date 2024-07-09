@@ -5,9 +5,28 @@ import { Todo } from "@/db"
 import { getStartAndEndOfDay } from "@/utils"
 
 export const getTodos = async () => {
-  const todos = await Todo.find().sort({ order: 1 })
+  const { startOfDay, endOfDay } = getStartAndEndOfDay(new Date)
 
-  return todos.map(todo => ({...todo._doc, _id: todo._id.toString()}))
+  const todos = await Todo.find({
+    date: {
+      $gte: startOfDay,
+    }
+  }).sort({ order: 1 })
+
+  return todos.map(todo => ({...todo._doc, _id: todo._id.toString(), isOverdue: false}))
+}
+
+export const getOverdueTodos = async () => {
+  const { startOfDay, endOfDay } = getStartAndEndOfDay(new Date)
+
+  const overdueTodos = await Todo.find({
+    date: {
+      $lt: startOfDay,
+    },
+    done: false,
+  }).sort({ date: 1 })
+
+  return overdueTodos.map(todo => ({...todo._doc, _id: todo._id.toString(), isOverdue: true}))
 }
 
 export const addTodo = async (todoObj) => {
@@ -28,7 +47,7 @@ export const addTodo = async (todoObj) => {
   revalidatePath("/")
 }
 
-export const updateTodo = async (updatedTodos) => {
+export const updateTodos = async (updatedTodos) => {
   const update = updatedTodos.map((todo, index) => {
     return {
       updateOne: {

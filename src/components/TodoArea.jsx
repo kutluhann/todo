@@ -3,10 +3,10 @@
 import DayCard from "@/components/DayCard";
 import { DragDropContext } from '@hello-pangea/dnd';
 import { isSameDay } from "@/utils";
-import { updateTodo } from "@/actions";
+import { updateTodos } from "@/actions";
 import { useOptimistic, useTransition } from "react";
 
-export default function TodoArea({ days, todos }) {
+export default function TodoArea({ days, todos, overdueTodos }) {
   const [pending, startTransition] = useTransition()
   const [optimisticTodos, updateOptimisticTodo] = useOptimistic(todos, (state, updatedTodos) => {
     return [
@@ -36,7 +36,7 @@ export default function TodoArea({ days, todos }) {
       updateOptimisticTodo(updatedTodos)
     })
 
-    await updateTodo(updatedTodos)
+    await updateTodos(updatedTodos)
   }
 
   return (
@@ -47,7 +47,7 @@ export default function TodoArea({ days, todos }) {
             const todoList = optimisticTodos.filter(todo => isSameDay(todo.date, day.date))
 
             return (
-              <DayCard key={day.name} day={day} todos={todoList} />
+              <DayCard key={day.name} day={day} todos={todoList} overdueTodos={overdueTodos} />
             )
           })}
         </div>

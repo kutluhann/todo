@@ -3,12 +3,16 @@
 import TodoItem from "@/components/TodoItem"
 import { Droppable, Draggable } from '@hello-pangea/dnd';
 import { useOptimistic, useRef } from "react";
-import { addTodo } from "@/actions";
-import { formatDate } from "@/utils";
+import { addTodo, updateTodos } from "@/actions";
+import { formatDate, isSameDay } from "@/utils";
 
-export default function DayCard({ day, todos }) {
+export default function DayCard({ day, todos, overdueTodos }) {
+  console.log(todos)
   const ref = useRef(null)
   const [optimisticTodos, setOptimisticTodos] = useOptimistic(todos, (state, callback) => {
+    return callback(state)
+  })
+  const [optimisticOverdueTodos, setOptimisticOverdueTodos] = useOptimistic(overdueTodos, (state, callback) => {
     return callback(state)
   })
 
@@ -32,11 +36,44 @@ export default function DayCard({ day, todos }) {
     await addTodo(todo)
   }
 
+  const handlePostponeOverdueTodos = async () => {
+    const updatedTodos = [
+      ...overdueTodos.map(todo => ({...todo, isOverdue: false, date: day.date})),
+      ...todos,
+    ]
+
+    setOptimisticTodos(() => [...updatedTodos])
+    setOptimisticOverdueTodos(() => [])
+
+    await updateTodos(updatedTodos)
+  }
+
   return (
     <div className=" relative select-none bg-white rounded-md flex flex-col items-center gap-2 px-4 py-2 shadow-xl has-[.dragging-over]:shadow-2xl">
       <p className="deneme font-semibold text-lg">{ day.name }</p>
       <span className="absolute text-xs top-2 right-2">{ formatDate(day.date) }</span>
       <div className="overflow-scroll h-full w-full flex flex-col">
+        {isSameDay(new Date(), day.date) && optimisticOverdueTodos.length > 0 && (
+          <div className="w-full mb-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold text-blue-600 underline">Overdue</span>
+              <span 
+                onClick={handlePostponeOverdueTodos}
+                className="text-sm font-semibold text-gray-600 hover:text-black cursor-pointer"
+              >
+                Postpone
+              </span>
+            </div>
+            {optimisticOverdueTodos.map(todo => (
+              <TodoItem 
+                todo={todo} 
+                key={todo._id} 
+                setOptimisticOverdueTodos={setOptimisticOverdueTodos} 
+              />
+            ))}
+            <hr />
+          </div>
+        )}
         <Droppable droppableId={day.name}>
           {(provided, snapshot) => (
             <div 
@@ -68,8 +105,7 @@ export default function DayCard({ day, todos }) {
         </Droppable>
         <div className="w-full">
           {optimisticTodos.filter(todo => todo.done).length > 0 && (
-            <span className="text-sm font-semibold text-gray-600 underline w-full">Completed</span>
-
+            <span className="text-sm font-semibold text-gray-600 underline">Completed</span>
           )}
           {optimisticTodos.filter(todo => todo.done).map((todo, index) => (
             <TodoItem 
