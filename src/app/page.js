@@ -9,7 +9,7 @@ export default async function Home() {
   const isTokenValid = await checkToken(token)
 
   if (isTokenValid) {
-    redirect("/todo")
+    redirect("/app")
   }
 
   return (

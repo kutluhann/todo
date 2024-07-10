@@ -1,5 +1,7 @@
 "use server"
 
+process.env.TZ = "Europe/Istanbul"
+
 import { revalidatePath } from "next/cache"
 import { Todo } from "@/db"
 import { getStartAndEndOfDay } from "@/utils"
@@ -84,7 +86,7 @@ export const authenticateUser = async (googleID) => {
 
     cookies().set("session", token, { expires, httpOnly: true })
 
-    redirect("/todo")
+    redirect("/app")
   } else {
     return {
       error: "Sorry, only I can use this app. If you wonder how it works you can look over the demo page."
