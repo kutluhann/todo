@@ -80,7 +80,7 @@ export default function DayCard({ day, todoList, overdueTodos }) {
             <div 
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className={`${snapshot.isDraggingOver ? "dragging-over" : ""} w-full flex-1`}
+              className={`${snapshot.isDraggingOver ? "dragging-over" : ""} w-full min-h-1 flex-1`}
             >
               {(optimisticTodos.filter(todo => !todo.done).length === 0 
                 && optimisticTodos.filter(todo => todo.done).length > 0) ? (
