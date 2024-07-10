@@ -10,10 +10,10 @@ export default function TodoItem({ todo, setOptimisticTodos, setOptimisticOverdu
   const handleTodoDelete = async () => {
     if (todo.isOverdue) {
       startTransition(() => setOptimisticOverdueTodos((state) => state.filter(t => t._id !== todo._id)))
-
     } else {
       startTransition(() => setOptimisticTodos((state) => state.filter(t => t._id !== todo._id)))
     }
+
     await deleteTodo(todo._id)
   }
 
@@ -39,7 +39,7 @@ export default function TodoItem({ todo, setOptimisticTodos, setOptimisticOverdu
     >
       <div className="flex gap-2 flex-1">
         <input disabled={todo.isOverdue} defaultChecked={todo.done} type="checkbox" onChange={(e) => handleTodoChecked(e)} className="bg-black" />
-        <p className={`${todo.done ? "line-through": ""}`} >{ todo.text }</p>
+        <p className={`${todo.done ? "line-through": ""} break-all`} >{ todo.text }</p>
       </div>
       <div className='group h-6 w-6 flex items-center justify-center'>
         <Trash2 onClick={handleTodoDelete} className="text-red-500 hidden group-hover:block cursor-pointer" size={16} />
