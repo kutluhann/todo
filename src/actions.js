@@ -3,6 +3,9 @@
 import { revalidatePath } from "next/cache"
 import { Todo } from "@/db"
 import { getStartAndEndOfDay } from "@/utils"
+import { generateJWT } from "./auth"
+import { cookies } from "next/headers"
+import { redirect } from "next/navigation"
 
 export const getTodos = async () => {
   const { startOfDay, endOfDay } = getStartAndEndOfDay(new Date)
@@ -72,4 +75,19 @@ export const changeStateOfTodo = async (todoID, state) => {
   await Todo.updateOne({ _id: todoID }, { done: state })
 
   revalidatePath("/")
+}
+
+export const authenticateUser = async (googleID) => {
+  if (googleID === process.env.AUTHORIZED_USER) {
+    const expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)
+    const token = await generateJWT({ googleID }, expires)
+
+    cookies().set("session", token, { expires, httpOnly: true })
+
+    redirect("/todo")
+  } else {
+    return {
+      error: "Sorry, only I can use this app. If you wonder how it works you can look over the demo page."
+    }
+  }
 }

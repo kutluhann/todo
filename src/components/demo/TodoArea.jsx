@@ -15,8 +15,9 @@ export default function TodoArea({ days, mockTodos }) {
 
     const day = days.find(day => day.name === destination.droppableId)
     const todo = todos.find(todo => todo._id === draggableId)
-    const todosInDestinationDay = todos.filter(todo => isSameDay(todo.date, day.date) && todo._id !== draggableId)
-    const todosInDifferentDays = todos.filter(todo => !isSameDay(todo.date, day.date) && todo._id !== draggableId)
+    const todosInDestinationDay = todos.filter(todo => isSameDay(todo.date, day.date) && todo._id !== draggableId && !todo.done)
+    const todosInDifferentDays = todos.filter(todo => !isSameDay(todo.date, day.date) && todo._id !== draggableId && !todo.done)
+    const completedTodos = todos.filter(todo => todo.done)
 
     if (destination.droppableId !== source.droppableId) todo.date = day.date
 
@@ -24,7 +25,8 @@ export default function TodoArea({ days, mockTodos }) {
       ...todosInDifferentDays,
       ...todosInDestinationDay.slice(0, destination.index),
       todo,
-      ...todosInDestinationDay.slice(destination.index)
+      ...todosInDestinationDay.slice(destination.index),
+      ...completedTodos,
     ])
   }
 
