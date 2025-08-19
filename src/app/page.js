@@ -3,6 +3,7 @@ import GoogleAuthButton from "@/components/GoogleAuthButton";
 import { cookies } from "next/headers";
 import { checkToken } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import Image from "next/image";
 
 export default async function Home() {
   const cookieStore = await cookies()
@@ -16,7 +17,13 @@ export default async function Home() {
 
   return (
     <div className="h-full flex items-center justify-center p-3">
-      <div className="w-[340px] h-[140px] select-none bg-white rounded-md flex flex-col justify-center items-center gap-6 px-4 py-2 shadow-2xl">
+      <div className="p-5 min-w-85 select-none bg-white rounded-md flex flex-col justify-center items-center gap-6 shadow-2xl">
+        <Image
+          src="/logo.png"
+          alt="logo"
+          width={80}
+          height={80}
+        />
         <p className="font-semibold text-lg text-center">Welcome back, boss!</p>
         <div className="w-full flex items-center justify-center gap-2">
           <GoogleAuthButton clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID} />
