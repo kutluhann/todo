@@ -1,66 +1,66 @@
-import { addDaysToDate } from "@/utils"
+import { addDaysToDate } from "@/lib/utils"
 
 export default [
   {
-    _id: '668e70965676496c0c097b56',
+    id: '668e70965676496c0c097b56',
     text: 'you can add',
-    done: false,
-    date: new Date(),
+    isCompleted: false,
+    date: addDaysToDate(new Date(), 0),
     isOverdue: false
   },
   {
-    _id: '668e70965676496c0c097b57',
+    id: '668e70965676496c0c097b57',
     text: 'well done!',
-    done: true,
+    isCompleted: true,
     date: addDaysToDate(new Date(), 2),
     isOverdue: false
   },
   {
-    _id: '668e70965676496c0c097b58',
+    id: '668e70965676496c0c097b58',
     text: 'and delete',
-    done: false,
-    date: new Date(),
+    isCompleted: false,
+    date: addDaysToDate(new Date(), 0),
     isOverdue: false
   },
   {
-    _id: '668e70965676496c0c097b59',
+    id: '668e70965676496c0c097b59',
     text: 'todos',
-    done: false,
-    date: new Date(),
+    isCompleted: false,
+    date: addDaysToDate(new Date(), 0),
     isOverdue: false
   },
   {
-    _id: '668e70965676496c0c097b55',
+    id: '668e70965676496c0c097b55',
     text: 'and complete them',
-    done: true,
-    date: new Date(),
+    isCompleted: true,
+    date: addDaysToDate(new Date(), 0),
     isOverdue: false
   },
   {
-    _id: '668e70965676496c0c097b60',
+    id: '668e70965676496c0c097b60',
     text: 'try dragging and ',
-    done: false,
+    isCompleted: false,
     date: addDaysToDate(new Date(), 1),
     isOverdue: false
   },
   {
-    _id: '668e70965676496c0c097b61',
+    id: '668e70965676496c0c097b61',
     text: 'dropping them',
-    done: false,
+    isCompleted: false,
     date: addDaysToDate(new Date(), 1),
     isOverdue: false
   },
   {
-    _id: '668e70965676496c0c097b62',
+    id: '668e70965676496c0c097b62',
     text: 'into the same day',
-    done: false,
+    isCompleted: false,
     date: addDaysToDate(new Date(), 1),
     isOverdue: false
   },
   {
-    _id: '668e70965676496c0c097b63',
+    id: '668e70965676496c0c097b63',
     text: 'or into a different day',
-    done: false,
+    isCompleted: false,
     date: addDaysToDate(new Date(), 1),
     isOverdue: false
   },

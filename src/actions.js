@@ -1,82 +1,100 @@
 "use server"
 
-process.env.TZ = "Europe/Istanbul"
+import { getDb } from "@/db"
+import { todos as todosTable } from "@/db/schema"
+import { lt, and, eq, gte, desc } from 'drizzle-orm'
 
-import { revalidatePath } from "next/cache"
-import { Todo } from "@/db"
-import { getStartAndEndOfDay } from "@/utils"
-import { generateJWT } from "./auth"
+import { getStartAndEndOfDay } from "@/lib/utils"
+import { generateJWT } from "@/lib/auth"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
+import { revalidatePath } from "next/cache"
 
 export const getTodos = async () => {
   const { startOfDay, endOfDay } = getStartAndEndOfDay(new Date)
 
-  const todos = await Todo.find({
-    date: {
-      $gte: startOfDay,
-    }
-  }).sort({ order: 1 })
+  const db = getDb();
+  const todos = await db
+    .select()
+    .from(todosTable)
+    .where(
+      gte(todosTable.date, startOfDay)
+    )
 
-  return todos.map(todo => ({...todo._doc, _id: todo._id.toString(), isOverdue: false}))
+  return todos.map(todo => ({...todo, isOverdue: false})).sort((a, b) => {
+    return a.position - b.position
+  })
 }
 
 export const getOverdueTodos = async () => {
   const { startOfDay, endOfDay } = getStartAndEndOfDay(new Date)
 
-  const overdueTodos = await Todo.find({
-    date: {
-      $lt: startOfDay,
-    },
-    done: false,
-  }).sort({ date: 1 })
+  const db = getDb();
+  const overdueTodos = await db
+    .select()
+    .from(todosTable)
+    .where(
+      and(
+        lt(todosTable.date, startOfDay),
+        eq(todosTable.isCompleted, false)
+      )
+    )
 
-  return overdueTodos.map(todo => ({...todo._doc, _id: todo._id.toString(), isOverdue: true}))
+  return overdueTodos.map(todo => ({...todo, isOverdue: true}))
 }
 
 export const addTodo = async (todoObj) => {
-  const { startOfDay, endOfDay } = getStartAndEndOfDay(todoObj.date)
+  const db = getDb();
+  const latestTodo = (await db
+    .select()
+    .from(todosTable)
+    .where(eq(todosTable.date, todoObj.date))
+    .orderBy(desc(todosTable.position))
+    .limit(1)
+  )[0];
 
-  const latestTodo = await Todo.findOne({
-    date: {
-      $gte: startOfDay,
-      $lt: endOfDay
-    }
-  }).sort({ order: -1 });
+  todoObj.position = latestTodo ? latestTodo.position + 1 : 0
 
-  todoObj.order = latestTodo ? latestTodo.order + 1 : 0
+  await db.insert(todosTable).values({
+    ...todoObj
+  });
 
-  const todo = new Todo(todoObj)
-  await todo.save()
-
-  revalidatePath("/")
+  revalidatePath("/app")
 }
 
 export const updateTodos = async (updatedTodos) => {
-  const update = updatedTodos.map((todo, index) => {
-    return {
-      updateOne: {
-        filter: { _id: todo._id },
-        update: { order: index, date: todo.date }
-      }
-    }
-  })
+  const db = getDb();
+  
+  for (const [index, todo] of updatedTodos.entries()) {
+    await db
+      .update(todosTable)
+      .set({
+        date: todo.date,
+        position: index
+      })
+      .where(eq(todosTable.id, todo.id));
+  }
 
-  await Todo.bulkWrite(update)
-
-  revalidatePath("/")
+  revalidatePath("/app")
 }
 
-export const deleteTodo = async (todoID) => {
-  await Todo.deleteOne({ _id: todoID })
+export const deleteTodo = async (id) => {
+  const db = getDb();
+  await db
+    .delete(todosTable)
+    .where(eq(todosTable.id, id));
 
-  revalidatePath("/")
+  revalidatePath("/app")
 }
 
-export const changeStateOfTodo = async (todoID, state) => {
-  await Todo.updateOne({ _id: todoID }, { done: state })
+export const changeStateOfTodo = async (id, state) => {
+  const db = getDb();
+  const a = await db
+    .update(todosTable)
+    .set({ isCompleted: state })
+    .where(eq(todosTable.id, id)).returning();
 
-  revalidatePath("/")
+  revalidatePath("/app")
 }
 
 export const authenticateUser = async (googleID) => {
@@ -89,7 +107,7 @@ export const authenticateUser = async (googleID) => {
     redirect("/app")
   } else {
     return {
-      error: "Sorry, only I can use this app. If you wonder how it works you can look over the demo page."
+      error: "Sorry, this app is only for me. If you wonder how it works you can look over the demo page."
     }
   }
 }

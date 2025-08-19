@@ -1,5 +1,4 @@
 import { SignJWT, jwtVerify } from "jose"
-import { NextResponse } from "next/server";
 
 const encodeKey = (key) => {
   return new TextEncoder().encode(key)

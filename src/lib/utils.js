@@ -1,3 +1,10 @@
+import { clsx } from "clsx";
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs) {
+  return twMerge(clsx(inputs));
+}
+
 export const days = [
   "Monday",
   "Tuesday",
@@ -9,10 +16,13 @@ export const days = [
 ]
 
 export const addDaysToDate = (date, days) => {
-  return new Date(date.getTime() + 1000 * 60 * 60 * 24 * days)
+  return formatDateDefault(new Date(date.getTime() + 1000 * 60 * 60 * 24 * days))
 }
 
 export const isSameDay = (firstDate, secondDate) => {
+  firstDate = new Date(firstDate)
+  secondDate = new Date(secondDate)
+
   return firstDate.getDate() === secondDate.getDate() 
     && firstDate.getMonth() === secondDate.getMonth()
     && firstDate.getYear() === secondDate.getYear()
@@ -28,7 +38,7 @@ export const generateTodoDays = () => {
   return [
     {
       name: today + " (Today)",
-      date: currentDate,
+      date: addDaysToDate(currentDate, 0),
     },
     ...filteredDays.slice(index).map(dayName => {
       const dayIndex = days.findIndex(day => day === dayName)
@@ -60,13 +70,18 @@ export const getStartAndEndOfDay = (date) => {
   const endOfDay = new Date(date)
   endOfDay.setHours(23, 59, 59, 999)
 
-  return { startOfDay, endOfDay }
+  return { startOfDay: formatDateDefault(startOfDay), endOfDay: formatDateDefault(endOfDay) }
 }
 
 export const formatDate = (date) => {
+  date = new Date(date)
   const month = date.toLocaleDateString("en", { month: 'long' })
   const day = date.getDate()
   const year = date.getFullYear()
 
   return day + " " + month + " " + year
+}
+
+export const formatDateDefault = (date) => {
+  return date.toISOString().split("T")[0]
 }

@@ -1,5 +1,5 @@
 import TodoArea from "@/components/demo/TodoArea";
-import { generateTodoDays } from "@/utils";
+import { generateTodoDays } from "@/lib/utils";
 import mockTodos from "./mock-todos";
 
 export const revalidate = 21600

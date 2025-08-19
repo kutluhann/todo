@@ -2,8 +2,8 @@
 
 import TodoItem from "@/components/demo/TodoItem"
 import { Droppable, Draggable } from '@hello-pangea/dnd';
-import { useState, useRef } from "react";
-import { formatDate } from "@/utils";
+import { useRef } from "react";
+import { formatDate } from "@/lib/utils";
 
 export default function DayCard({ day, mockTodoList, setTodos }) {
   const ref = useRef(null)
@@ -17,12 +17,12 @@ export default function DayCard({ day, mockTodoList, setTodos }) {
 
     const todo = {
       text: newTodoText,
-      date: day.date
+      date: day.date,
     }
 
     setTodos((state) => [
       ...state,
-      { ...todo, _id: Math.floor(Math.random() * 100000) + "" }
+      { ...todo, id: Math.floor(Math.random() * 100000) + "" }
     ])
   }
 
@@ -40,18 +40,18 @@ export default function DayCard({ day, mockTodoList, setTodos }) {
               ref={provided.innerRef}
               className={`${snapshot.isDraggingOver ? "dragging-over" : ""} w-full flex-1`}
             >
-              {(mockTodoList.filter(todo => !todo.done).length === 0 
-                && mockTodoList.filter(todo => todo.done).length > 0) ? (
+              {(mockTodoList.filter(todo => !todo.isCompleted).length === 0 
+                && mockTodoList.filter(todo => todo.isCompleted).length > 0) ? (
                 <span className="text-sm">You've completed all of them!</span>
-              ) : mockTodoList.filter(todo => !todo.done).map((todo, index) => (
-                <Draggable key={todo._id} draggableId={todo._id} index={index}>
+              ) : mockTodoList.filter(todo => !todo.isCompleted).map((todo, index) => (
+                <Draggable key={todo.id} draggableId={todo.id} index={index}>
                   {(provided) => (
                     <TodoItem
                       innerRef={provided.innerRef}
                       draggableProps={provided.draggableProps}
                       dragHandleProps={provided.dragHandleProps}
                       todo={todo} 
-                      key={todo._id} 
+                      key={todo.id} 
                       setTodos={setTodos} 
                     />
                   )}
@@ -63,13 +63,13 @@ export default function DayCard({ day, mockTodoList, setTodos }) {
           )}
         </Droppable>
         <div className="w-full">
-          {mockTodoList.filter(todo => todo.done).length > 0 && (
+          {mockTodoList.filter(todo => todo.isCompleted).length > 0 && (
             <span className="text-sm font-semibold text-gray-600 underline">Completed</span>
           )}
-          {mockTodoList.filter(todo => todo.done).map((todo, index) => (
+          {mockTodoList.filter(todo => todo.isCompleted).map((todo, index) => (
             <TodoItem 
               todo={todo} 
-              key={todo._id} 
+              key={todo.id} 
               setTodos={setTodos} 
             />
           ))}

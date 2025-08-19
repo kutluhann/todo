@@ -2,7 +2,7 @@
 
 import DayCard from "@/components/demo/DayCard";
 import { DragDropContext } from '@hello-pangea/dnd';
-import { isSameDay } from "@/utils";
+import { isSameDay } from "@/lib/utils";
 import { useState } from "react";
 
 export default function TodoArea({ days, mockTodos }) {
@@ -14,10 +14,10 @@ export default function TodoArea({ days, mockTodos }) {
     if (!destination) return
 
     const day = days.find(day => day.name === destination.droppableId)
-    const todo = todos.find(todo => todo._id === draggableId)
-    const todosInDestinationDay = todos.filter(todo => isSameDay(todo.date, day.date) && todo._id !== draggableId && !todo.done)
-    const todosInDifferentDays = todos.filter(todo => !isSameDay(todo.date, day.date) && todo._id !== draggableId && !todo.done)
-    const completedTodos = todos.filter(todo => todo.done)
+    const todo = todos.find(todo => todo.id === draggableId)
+    const todosInDestinationDay = todos.filter(todo => isSameDay(todo.date, day.date) && todo.id !== draggableId && !todo.isCompleted)
+    const todosInDifferentDays = todos.filter(todo => !isSameDay(todo.date, day.date) && todo.id !== draggableId && !todo.isCompleted)
+    const completedTodos = todos.filter(todo => todo.isCompleted)
 
     if (destination.droppableId !== source.droppableId) todo.date = day.date
 

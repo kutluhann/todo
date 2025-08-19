@@ -2,12 +2,14 @@
 
 import TodoItem from "@/components/TodoItem"
 import { Droppable, Draggable } from '@hello-pangea/dnd';
-import { useOptimistic, useRef } from "react";
+import { useOptimistic, useRef, useTransition } from "react";
 import { addTodo, updateTodos } from "@/actions";
-import { formatDate, isSameDay } from "@/utils";
+import { formatDate, isSameDay } from "@/lib/utils";
 
-export default function DayCard({ day, todoList, overdueTodos }) {
+export default function DayCard({ day, todoList, overdueTodos, isBlurred }) {
   const ref = useRef(null)
+
+  const [isPending, startTransition] = useTransition();
   const [optimisticTodos, setOptimisticTodos] = useOptimistic(todoList, (state, callback) => {
     return callback(state)
   })
@@ -24,13 +26,15 @@ export default function DayCard({ day, todoList, overdueTodos }) {
 
     const todo = {
       text: newTodoText,
-      date: day.date
+      date: day.date,
     }
 
-    setOptimisticTodos((state) => [
-      ...state,
-      { ...todo, _id: Math.floor(Math.random() * 100000) + "" }
-    ])
+    startTransition(() => {
+      setOptimisticTodos((state) => [
+        ...state,
+        { ...todo, id: Math.floor(Math.random() * 100000) + "" }
+      ])
+    })
 
     await addTodo(todo)
   }
@@ -41,14 +45,16 @@ export default function DayCard({ day, todoList, overdueTodos }) {
       ...todoList,
     ]
 
-    setOptimisticTodos(() => [...updatedTodos])
-    setOptimisticOverdueTodos(() => [])
+    startTransition(() => {
+      setOptimisticTodos(() => [...updatedTodos])
+      setOptimisticOverdueTodos(() => [])
+    })
 
     await updateTodos(updatedTodos)
   }
 
   return (
-    <div className="select-none bg-white rounded-md flex flex-col items-center gap-2 px-4 py-2 shadow-xl has-[.dragging-over]:shadow-2xl">
+    <div className="h-full select-none bg-white rounded-md flex flex-col items-center gap-2 px-4 py-2 shadow-xl has-[.dragging-over]:shadow-2xl">
       <div className="flex flex-col items-center">
         <span className="text-xs -mb-1">{ formatDate(day.date) }</span>
         <p className="font-semibold">{ day.name }</p>
@@ -68,33 +74,35 @@ export default function DayCard({ day, todoList, overdueTodos }) {
             {optimisticOverdueTodos.map(todo => (
               <TodoItem 
                 todo={todo} 
-                key={todo._id} 
-                setOptimisticOverdueTodos={setOptimisticOverdueTodos} 
+                key={todo.id} 
+                setOptimisticOverdueTodos={setOptimisticOverdueTodos}
+                isBlurred={isBlurred}
               />
             ))}
             <hr />
           </div>
         )}
-        <Droppable droppableId={day.name}>
+        <Droppable droppableId={day.date}>
           {(provided, snapshot) => (
             <div 
               {...provided.droppableProps}
               ref={provided.innerRef}
               className={`${snapshot.isDraggingOver ? "dragging-over" : ""} w-full min-h-1 flex-1`}
             >
-              {(optimisticTodos.filter(todo => !todo.done).length === 0 
-                && optimisticTodos.filter(todo => todo.done).length > 0) ? (
+              {(optimisticTodos.filter(todo => !todo.isCompleted).length === 0 
+                && optimisticTodos.filter(todo => todo.isCompleted).length > 0) ? (
                 <span className="text-sm">You've completed all of them!</span>
-              ) : optimisticTodos.filter(todo => !todo.done).map((todo, index) => (
-                <Draggable key={todo._id} draggableId={todo._id} index={index}>
+              ) : optimisticTodos.filter(todo => !todo.isCompleted).map((todo, index) => (
+                <Draggable key={todo.id} draggableId={todo.id} index={index}>
                   {(provided) => (
                     <TodoItem
                       innerRef={provided.innerRef}
                       draggableProps={provided.draggableProps}
                       dragHandleProps={provided.dragHandleProps}
                       todo={todo} 
-                      key={todo._id} 
-                      setOptimisticTodos={setOptimisticTodos} 
+                      key={todo.id} 
+                      setOptimisticTodos={setOptimisticTodos}
+                      isBlurred={isBlurred}
                     />
                   )}
                 </Draggable>
@@ -105,14 +113,15 @@ export default function DayCard({ day, todoList, overdueTodos }) {
           )}
         </Droppable>
         <div className="w-full">
-          {optimisticTodos.filter(todo => todo.done).length > 0 && (
+          {optimisticTodos.filter(todo => todo.isCompleted).length > 0 && (
             <span className="text-sm font-semibold text-gray-600 underline">Completed</span>
           )}
-          {optimisticTodos.filter(todo => todo.done).map((todo, index) => (
+          {optimisticTodos.filter(todo => todo.isCompleted).map((todo, index) => (
             <TodoItem 
               todo={todo} 
-              key={todo._id} 
-              setOptimisticTodos={setOptimisticTodos} 
+              key={todo.id} 
+              setOptimisticTodos={setOptimisticTodos}
+              isBlurred={isBlurred}
             />
           ))}
         </div>

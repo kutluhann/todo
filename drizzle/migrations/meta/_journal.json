@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1755450556492,
+      "tag": "0000_real_vargas",
+      "breakpoints": true
+    }
+  ]
+}
