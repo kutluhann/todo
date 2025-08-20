@@ -6,6 +6,7 @@ import { isSameDay } from "@/lib/utils";
 import { updateTodos } from "@/actions";
 import { useOptimistic, useTransition, useState, useEffect } from "react";
 import Drawer from "@/components/Drawer";
+import useShake from "@/hooks/useShake";
 
 export default function TodoArea({ days, todos, overdueTodos }) {
   const [pending, startTransition] = useTransition()
@@ -17,17 +18,23 @@ export default function TodoArea({ days, todos, overdueTodos }) {
     ]
   })
 
+  const toggleBlur = () => {
+    setIsBlurred(prev => !prev);
+  };
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       if ((event.metaKey || event.ctrlKey) && event.key === 'j') {
         event.preventDefault();
-        setIsBlurred(prev => !prev);
+        toggleBlur();
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
+
+  useShake(toggleBlur);
 
   const onDragEnd = async (result) => {
     const { destination, source, draggableId } = result
