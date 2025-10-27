@@ -54,8 +54,8 @@ export default function DayCard({ day, todoList, overdueTodos, isBlurred }) {
   }
 
   return (
-    <div className="h-full select-none bg-white rounded-md flex flex-col items-center gap-2 px-4 py-2 shadow-xl has-[.dragging-over]:shadow-2xl">
-      <div className="flex flex-col items-center">
+    <div className="h-full select-none bg-white rounded-md flex flex-col items-center px-4 py-2 shadow-xl has-[.dragging-over]:shadow-2xl">
+      <div className="flex flex-col items-center mb-2">
         <span className="text-xs -mb-1">{ formatDate(day.date) }</span>
         <p className="font-semibold">{ day.name }</p>
       </div>
@@ -112,19 +112,19 @@ export default function DayCard({ day, todoList, overdueTodos, isBlurred }) {
             </div>
           )}
         </Droppable>
-        <div className="w-full">
-          {optimisticTodos.filter(todo => todo.isCompleted).length > 0 && (
-            <span className="text-sm font-semibold text-gray-600 underline">Completed</span>
-          )}
-          {optimisticTodos.filter(todo => todo.isCompleted).map((todo, index) => (
-            <TodoItem 
-              todo={todo} 
-              key={todo.id} 
-              setOptimisticTodos={setOptimisticTodos}
-              isBlurred={isBlurred}
-            />
-          ))}
-        </div>
+      </div>
+      <div className="w-full">
+        {optimisticTodos.filter(todo => todo.isCompleted).length > 0 && (
+          <span className="text-sm font-semibold text-gray-600 underline">Completed</span>
+        )}
+        {optimisticTodos.filter(todo => todo.isCompleted).map((todo, index) => (
+          <TodoItem 
+            todo={todo} 
+            key={todo.id} 
+            setOptimisticTodos={setOptimisticTodos}
+            isBlurred={isBlurred}
+          />
+        ))}
       </div>
       <form 
         ref={ref}
