@@ -101,8 +101,9 @@ export const authenticateUser = async (googleID) => {
   if (googleID === process.env.AUTHORIZED_USER) {
     const expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)
     const token = await generateJWT({ googleID }, expires)
-
-    cookies().set("session", token, { expires, httpOnly: true })
+    
+    const cookieStore = await cookies()
+    cookieStore.set("session", token, { expires, httpOnly: true })
 
     redirect("/app")
   } else {
