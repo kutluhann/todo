@@ -59,7 +59,7 @@ export default function DayCard({ day, todoList, overdueTodos, isBlurred }) {
         <span className="text-xs -mb-1">{ formatDate(day.date) }</span>
         <p className="font-semibold">{ day.name }</p>
       </div>
-      <div className="overflow-scroll h-full w-full flex flex-col">
+      <div className="overflow-auto h-full w-full flex flex-col">
         {isSameDay(new Date(), day.date) && optimisticOverdueTodos.length > 0 && (
           <div className="w-full mb-2">
             <div className="flex items-center justify-between">
