@@ -32,7 +32,7 @@ export default function DayCard({ day, mockTodoList, setTodos }) {
         <span className="text-xs -mb-1">{ formatDate(day.date) }</span>
         <p className="font-semibold">{ day.name }</p>
       </div>
-      <div className="overflow-scroll h-full w-full flex flex-col">
+      <div className="overflow-auto h-full w-full flex flex-col">
         <Droppable droppableId={day.name}>
           {(provided, snapshot) => (
             <div 
